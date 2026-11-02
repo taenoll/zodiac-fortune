@@ -158,6 +158,33 @@ const ACTIONS = [
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
+// 달 위상 --------------------------------------------------------------
+
+const NEW_MOON_REF = Date.UTC(2000, 0, 6, 18, 14); // 기준 신월 2000-01-06 18:14 UTC
+const SYNODIC_MONTH = 29.530588853; // 삭망월(일)
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// 달 나이 순서대로 8단계. energy: 에너지 지수 보정값
+const MOON_PHASES = [
+  { name: '신월', emoji: '🌑', energy: -10, line: '달이 숨은 날, 조용히 새로운 소원을 마음속에 심어 보세요' },
+  { name: '초승달', emoji: '🌒', energy: 0, line: '가느다란 달처럼 작은 시작이 반짝이는 날, 첫걸음을 떼 보세요' },
+  { name: '상현달', emoji: '🌓', energy: 0, line: '달이 반쯤 차오른 날, 미뤄 둔 일을 하나씩 결정해 보세요' },
+  { name: '차오르는 달', emoji: '🌔', energy: 5, line: '달이 점점 차오르는 날, 노력한 만큼 쑥쑥 자라나요' },
+  { name: '보름달', emoji: '🌕', energy: 15, line: '달이 가득 찬 날, 마음먹은 일을 밀어붙여 보세요' },
+  { name: '기우는 달', emoji: '🌖', energy: -5, line: '달이 조금씩 기우는 날, 고마운 사람에게 마음을 나눠 보세요' },
+  { name: '하현달', emoji: '🌗', energy: 0, line: '달이 반쯤 비워진 날, 필요 없는 걱정은 내려놓아요' },
+  { name: '그믐달', emoji: '🌘', energy: -10, line: '달이 쉬어 가는 날, 무리하지 말고 나를 토닥여 주세요' },
+];
+
+// 달 나이(0 ~ 29.53일) → 8단계 중 하나
+// 각 단계가 그 위상을 가운데에 두도록 반 칸(1/16) 밀어서 반올림한다.
+function getMoonPhase(date) {
+  const days = (date.getTime() - NEW_MOON_REF) / DAY_MS;
+  const age = ((days % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH;
+  const index = Math.round((age / SYNODIC_MONTH) * 8) % 8;
+  return { ...MOON_PHASES[index], age };
+}
+
 // DOM ----------------------------------------------------------------
 
 const form = document.querySelector('.input-card');
@@ -168,8 +195,11 @@ const hint = document.querySelector('.birth__hint');
 const hintSymbol = document.querySelector('.birth__hint-symbol');
 const hintText = document.querySelector('.birth__hint-text');
 const resultCard = document.querySelector('.result');
+const rankingList = document.querySelector('.ranking__list');
 
 const today = new Date();
+const dateKey = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+const moon = getMoonPhase(today);
 
 // 유틸 ----------------------------------------------------------------
 
@@ -237,6 +267,27 @@ function findSign(month, day) {
   });
 }
 
+// 오하아사 스타일 순위: 날짜 + 별자리 해시 점수로 12별자리 정렬 → 1 ~ 12위
+function getRanking() {
+  return SIGNS.map((sign) => ({ sign, score: hash(`${dateKey}|rank|${sign.name}`) }))
+    .sort((a, b) => b.score - a.score || a.sign.name.localeCompare(b.sign.name))
+    .map(({ sign }, i) => ({ sign, rank: i + 1 }));
+}
+
+const ranking = getRanking();
+const getRank = (sign) => ranking.find((r) => r.sign === sign).rank;
+
+// 바이브 별점은 순위 연동: 1~2위 ★5 / 3~5위 ★4 / 6~8위 ★3 / 9~11위 ★2 / 12위 ★1
+function starsByRank(rank) {
+  if (rank <= 2) return 5;
+  if (rank <= 5) return 4;
+  if (rank <= 8) return 3;
+  if (rank <= 11) return 2;
+  return 1;
+}
+
+const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+
 function renderStars(el, count) {
   el.innerHTML =
     `<span class="stars__on">${'★'.repeat(count)}</span>` +
@@ -253,6 +304,59 @@ function renderToday() {
   const d = today.getDate();
   time.dateTime = `${y}-${pad(m)}-${pad(d)}`;
   time.textContent = `${y}년 ${m}월 ${d}일 ${WEEKDAYS[today.getDay()]}요일`;
+}
+
+function renderMoon() {
+  document.querySelector('.moon-name').textContent = moon.name;
+  document.querySelector('.moon-emoji').textContent = moon.emoji;
+}
+
+// 12줄 순위 리스트 (결과 보기 전에도 표시)
+function renderRanking() {
+  const items = ranking.map(({ sign, rank }, i) => {
+    const li = document.createElement('li');
+    li.className = 'ranking__item';
+    if (rank <= 3) li.classList.add('ranking__item--top');
+    li.dataset.sign = sign.name;
+    li.style.setProperty('--i', i);
+    li.innerHTML =
+      `<span class="ranking__rank">${rank === 1 ? '<span class="ranking__crown" aria-hidden="true">♛</span>' : ''}${rank}<span class="sr-only">위</span></span>` +
+      `<span class="ranking__symbol" aria-hidden="true">${sign.symbol}</span>` +
+      `<span class="ranking__name">${sign.name}</span>` +
+      '<span class="ranking__me">내 별자리</span>';
+    return li;
+  });
+  rankingList.replaceChildren(...items);
+}
+
+function highlightMyRank(sign) {
+  rankingList.querySelectorAll('.ranking__item').forEach((li) => {
+    const mine = li.dataset.sign === sign.name;
+    li.classList.toggle('is-mine', mine);
+    if (mine) li.setAttribute('aria-current', 'true');
+    else li.removeAttribute('aria-current');
+  });
+}
+
+// 결과 카드 맨 위 "오늘 ○위" 배지 + 1위·12위 문구
+function renderRank(rank) {
+  const badge = resultCard.querySelector('.rank-badge');
+  const message = resultCard.querySelector('.rank-message');
+  const solution = resultCard.querySelector('.solution');
+
+  badge.textContent = rank === 1 ? '♛ 오늘 1위' : `오늘 ${rank}위`;
+  badge.classList.toggle('rank-badge--gold', rank === 1);
+
+  message.hidden = rank !== 1 && rank !== 12;
+  message.classList.toggle('rank-message--gold', rank === 1);
+  message.classList.toggle('rank-message--cheer', rank === 12);
+  if (rank === 1) message.textContent = '축하해요! 오늘의 1등 별자리예요 ✦';
+  if (rank === 12) {
+    message.textContent = '괜찮아요, 오늘의 행운 아이템이 지켜줄 거예요 ☆';
+  }
+
+  // 12위는 솔루션 카드 강조
+  solution.classList.toggle('solution--cheer', rank === 12);
 }
 
 function updateDayOptions() {
@@ -291,7 +395,7 @@ function showIncompleteMessage() {
 }
 
 // 1~4. 바이브·애정·금전·학업 카드
-function renderFortuneCards(picker) {
+function renderFortuneCards(picker, rank) {
   resultCard.querySelectorAll('.fortune-card[data-key]').forEach((card) => {
     const key = card.dataset.key;
     const { situations, advices } = FORTUNES[key];
@@ -299,9 +403,14 @@ function renderFortuneCards(picker) {
     const situation = picker.pick(`${key}-situation`, situations);
     const advice = picker.pick(`${key}-advice`, advices);
 
-    renderStars(card.querySelector('.stars'), picker.stars(`${key}-stars`));
+    // 바이브 별점만 순위 연동, 나머지는 해시
+    const stars =
+      key === 'vibe' ? starsByRank(rank) : picker.stars(`${key}-stars`);
+    renderStars(card.querySelector('.stars'), stars);
 
     if (key === 'vibe') {
+      card.querySelector('.vibe__moon').textContent =
+        `${moon.emoji} ${moon.line}`;
       const keyword = picker.pick('vibe-keyword', VIBE_KEYWORDS);
       // '설렘'이에요 / '여유'예요
       const ending = josa(keyword, '이에요', '예요').slice(keyword.length);
@@ -316,7 +425,8 @@ function renderFortuneCards(picker) {
 
 // 5. 에너지 지수
 function renderEnergy(picker) {
-  const energy = picker.number('energy', 101); // 0 ~ 100
+  // 0 ~ 100 + 달 위상 보정 (범위는 0 ~ 100 유지)
+  const energy = clamp(picker.number('energy', 101) + moon.energy, 0, 100);
   const level = energy < 40 ? 0 : energy < 70 ? 1 : 2;
   const gauge = resultCard.querySelector('.energy__gauge');
   const fill = resultCard.querySelector('.energy__fill');
@@ -352,16 +462,23 @@ function renderSolution(picker) {
 }
 
 function renderResult(sign) {
-  const dateKey = `${today.getFullYear()}${pad(today.getMonth() + 1)}${pad(today.getDate())}`;
   const picker = makePicker(`${dateKey}-${sign.name}`);
+  const rank = getRank(sign);
 
   resultCard.querySelector('.sign__symbol').textContent = sign.symbol;
   resultCard.querySelector('.sign__name').textContent = sign.name;
   resultCard.querySelector('.sign__period').textContent = sign.period;
 
-  renderFortuneCards(picker);
+  renderRank(rank);
+  renderFortuneCards(picker, rank);
   renderEnergy(picker);
   renderSolution(picker);
+  highlightMyRank(sign);
+
+  // 카드가 순서대로 올라오도록 순번 지정
+  resultCard.querySelectorAll('.fortune-card').forEach((card, i) => {
+    card.style.setProperty('--i', i);
+  });
 }
 
 function showResult() {
@@ -380,6 +497,8 @@ function showResult() {
 
 function init() {
   renderToday();
+  renderMoon();
+  renderRanking();
 
   // 처음엔 모두 빈 칸("선택")
   createOptions(yearSelect, today.getFullYear(), 1940, (i) => `${i}년`);

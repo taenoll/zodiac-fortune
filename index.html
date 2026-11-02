@@ -47,6 +47,10 @@
             <span class="accent">✦</span>
           </h1>
           <p class="header__date"><time class="today"></time></p>
+          <p class="header__moon">
+            오늘의 달: <span class="moon-name"></span>
+            <span class="moon-emoji" aria-hidden="true"></span>
+          </p>
         </header>
 
         <main>
@@ -100,8 +104,12 @@
 
             <div class="sign">
               <div class="sign__symbol" aria-hidden="true"></div>
-              <h2 class="sign__name"></h2>
+              <div class="sign__title-row">
+                <h2 class="sign__name"></h2>
+                <span class="rank-badge"></span>
+              </div>
               <p class="sign__period"></p>
+              <p class="rank-message" hidden></p>
             </div>
 
             <hr class="result__divider" />
@@ -114,6 +122,7 @@
                   <p class="stars" role="img"></p>
                 </div>
                 <p class="fortune-card__text"></p>
+                <p class="vibe__moon"></p>
               </li>
               <li class="fortune-card" data-key="love">
                 <div class="fortune-card__head">
@@ -170,6 +179,15 @@
                 <p class="lucky-card__value lucky-item"></p>
               </li>
             </ul>
+          </section>
+
+          <!-- 오늘의 별자리 순위 (결과를 보기 전에도 항상 표시) -->
+          <section class="card ranking" aria-labelledby="ranking-title">
+            <h2 class="ranking__title" id="ranking-title">
+              <span class="accent">♛</span> 오늘의 별자리 순위
+            </h2>
+            <p class="ranking__desc">매일 바뀌는 오늘의 순위예요</p>
+            <ol class="ranking__list"></ol>
           </section>
         </main>
 

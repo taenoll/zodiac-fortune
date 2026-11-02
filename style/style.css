@@ -497,6 +497,321 @@ a:hover {
   box-shadow: 0 0 0 1px var(--swatch, var(--color-main));
 }
 
+/* 오늘의 달 (헤더) --------------------------------------------------- */
+
+.header__moon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.moon-emoji {
+  display: inline-block;
+  font-size: 18px;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 순위 배지 · 1위/12위 문구 ------------------------------------------- */
+
+.sign__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-hint);
+  color: var(--color-point);
+  font-family: var(--font-title);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.rank-badge--gold {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-star);
+  color: var(--color-text);
+  box-shadow: 0 4px 12px rgba(255, 210, 110, 0.45);
+}
+
+/* 금빛 배지 위를 지나가는 반짝임 */
+.rank-badge--gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: shine 2.8s ease-in-out 1s infinite;
+}
+
+.rank-message {
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.rank-message--gold {
+  background: var(--color-star);
+}
+
+.rank-message--cheer {
+  background: var(--color-sub);
+}
+
+/* 12위: 솔루션 카드 강조 */
+.solution--cheer {
+  box-shadow: 0 0 0 2px var(--color-point);
+  animation: glow 2.4s ease-in-out infinite;
+}
+
+/* 바이브 카드의 달 한 줄 */
+.vibe__moon {
+  padding-top: 8px;
+  border-top: 2px dashed var(--color-sub);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-point);
+  word-break: keep-all;
+}
+
+/* 오늘의 별자리 순위 -------------------------------------------------- */
+
+.ranking {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.ranking__title {
+  font-family: var(--font-title);
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.ranking__desc {
+  margin: 4px 0 16px;
+  font-size: 13px;
+}
+
+.ranking__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ranking__item {
+  display: grid;
+  grid-template-columns: 44px 28px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border-radius: 14px;
+  background: var(--color-bg);
+  font-size: 15px;
+  line-height: 1.4;
+  transition:
+    background-color 0.4s,
+    transform 0.4s;
+  /* backwards: 끝난 뒤엔 transform 을 놓아줘야 .is-mine 확대가 적용됨 */
+  animation: rise 0.45s ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.ranking__rank {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: var(--font-title);
+  font-size: 15px;
+  color: var(--color-point);
+}
+
+/* 1~3위는 순위 숫자를 크게 */
+.ranking__item--top .ranking__rank {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.ranking__crown {
+  font-size: 14px;
+  color: #e6b94a;
+}
+
+.ranking__symbol {
+  font-size: 18px;
+  color: var(--color-point);
+  text-align: center;
+}
+
+.ranking__name {
+  font-family: var(--font-title);
+}
+
+.ranking__me {
+  display: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-point);
+  font-family: var(--font-title);
+  font-size: 12px;
+}
+
+/* 결과를 본 뒤 내 별자리 줄 강조 */
+.ranking__item.is-mine {
+  background: var(--color-main);
+  transform: scale(1.02);
+}
+
+.ranking__item.is-mine .ranking__rank,
+.ranking__item.is-mine .ranking__symbol {
+  color: var(--color-white);
+}
+
+.ranking__item.is-mine .ranking__me {
+  display: inline-block;
+}
+
+/* 화면 읽기 프로그램용 숨김 텍스트 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 애니메이션 ---------------------------------------------------------- */
+
+/* 장식 별이 반짝반짝 (순서마다 박자 다르게) */
+.deco {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+.deco:nth-of-type(2n) {
+  animation-duration: 4s;
+  animation-delay: 0.6s;
+}
+
+.deco:nth-of-type(3n) {
+  animation-duration: 2.6s;
+  animation-delay: 1.2s;
+}
+
+/* 결과 카드 안 소카드가 차례로 올라옴 */
+.result.show .fortune-card {
+  animation: rise 0.5s ease-out backwards;
+  animation-delay: calc(0.2s + var(--i, 0) * 80ms);
+}
+
+/* 12위 솔루션 카드: 등장 + 반짝이는 테두리 함께 */
+.result.show .solution--cheer {
+  animation:
+    rise 0.5s ease-out calc(0.2s + var(--i, 0) * 80ms) backwards,
+    glow 2.4s ease-in-out 1.2s infinite;
+}
+
+/* 순위 배지가 톡 튀어나옴 */
+.result.show .rank-badge {
+  animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+.result.show .sign__symbol {
+  animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes shine {
+  0%,
+  60% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px var(--color-point),
+      0 0 0 0 rgba(142, 124, 195, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--color-point),
+      0 0 0 8px rgba(142, 124, 195, 0);
+  }
+}
+
 /* footer ---------------------------------------------------------- */
 
 .footer {
@@ -540,7 +855,15 @@ a:hover {
 @media (prefers-reduced-motion: reduce) {
   .result,
   .energy__fill,
-  .button {
+  .button,
+  .ranking__item {
     transition: none;
+  }
+
+  /* 반짝임·등장 애니메이션 모두 끄기 */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
   }
 }
