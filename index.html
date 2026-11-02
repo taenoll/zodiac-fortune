@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 별자리 운세</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap"
+    />
+    <link rel="stylesheet" href="./reset.css" />
+    <link rel="stylesheet" href="./style/style.css" />
+    <script defer src="./js/main.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <!-- PC 배경 장식 (768px 이상에서만 표시) -->
+      <div class="page-deco" aria-hidden="true">
+        <span class="deco deco--yellow" style="top: 64px; left: 140px; font-size: 28px">✦</span>
+        <span class="deco deco--lavender" style="top: 150px; left: 260px; font-size: 18px">☆</span>
+        <span class="deco deco--lavender deco--faint" style="top: 300px; left: 110px; font-size: 56px">☾</span>
+        <span class="deco deco--pink" style="top: 470px; left: 220px; font-size: 40px">♉&#xFE0E;</span>
+        <span class="deco deco--yellow" style="top: 620px; left: 90px; font-size: 16px">✦</span>
+        <span class="deco deco--lavender deco--faint" style="top: 760px; left: 180px; font-size: 36px">♓&#xFE0E;</span>
+        <span class="deco deco--pink" style="top: 920px; left: 280px; font-size: 20px">☆</span>
+        <span class="deco deco--pink" style="top: 90px; right: 170px; font-size: 20px">☆</span>
+        <span class="deco deco--lavender deco--faint" style="top: 200px; right: 110px; font-size: 44px">♌&#xFE0E;</span>
+        <span class="deco deco--yellow" style="top: 360px; right: 250px; font-size: 24px">✦</span>
+        <span class="deco deco--pink" style="top: 540px; right: 130px; font-size: 40px">♎&#xFE0E;</span>
+        <span class="deco deco--lavender" style="top: 700px; right: 260px; font-size: 16px">✦</span>
+        <span class="deco deco--yellow" style="top: 840px; right: 100px; font-size: 52px">☾</span>
+        <span class="deco deco--lavender" style="top: 980px; right: 220px; font-size: 18px">☆</span>
+      </div>
+
+      <div class="container">
+        <header class="header">
+          <!-- 모바일 헤더 장식 -->
+          <span class="deco deco--yellow header__deco" aria-hidden="true" style="top: 18px; left: 26px; font-size: 20px">✦</span>
+          <span class="deco deco--lavender header__deco" aria-hidden="true" style="top: 34px; right: 30px; font-size: 16px">☆</span>
+          <span class="deco deco--pink header__deco" aria-hidden="true" style="top: 92px; left: 44px; font-size: 12px">✦</span>
+          <span class="deco deco--yellow header__deco" aria-hidden="true" style="top: 86px; right: 52px; font-size: 14px">✦</span>
+
+          <h1 class="header__title">
+            <span class="accent">☾</span> 오늘의 별자리 운세
+            <span class="accent">✦</span>
+          </h1>
+          <p class="header__date"><time class="today"></time></p>
+        </header>
+
+        <main>
+          <form class="card input-card" novalidate>
+            <fieldset class="birth">
+              <legend class="birth__legend">생년월일을 알려 주세요</legend>
+
+              <div class="birth__fields">
+                <div class="field">
+                  <label class="field__label" for="birth-y">년</label>
+                  <div class="field__select-wrap">
+                    <select class="field__select" id="birth-y" name="year" required></select>
+                    <svg class="field__arrow" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="birth-m">월</label>
+                  <div class="field__select-wrap">
+                    <select class="field__select" id="birth-m" name="month" required></select>
+                    <svg class="field__arrow" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="birth-d">일</label>
+                  <div class="field__select-wrap">
+                    <select class="field__select" id="birth-d" name="day" required></select>
+                    <svg class="field__arrow" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <p class="birth__hint" aria-live="polite">
+                <span class="birth__hint-symbol" aria-hidden="true"></span>
+                <span class="birth__hint-text"></span>
+              </p>
+            </fieldset>
+
+            <button class="button" type="submit">운세 정보 보기 ✦</button>
+          </form>
+
+          <section class="card result" aria-label="오늘의 운세 결과" hidden>
+            <span class="deco deco--yellow" aria-hidden="true" style="top: 22px; left: 30px; font-size: 14px">✦</span>
+            <span class="deco deco--pink" aria-hidden="true" style="top: 40px; right: 36px; font-size: 18px">☆</span>
+            <span class="deco deco--lavender result__deco-small" aria-hidden="true" style="top: 96px; font-size: 11px">✦</span>
+
+            <div class="sign">
+              <div class="sign__symbol" aria-hidden="true"></div>
+              <h2 class="sign__name"></h2>
+              <p class="sign__period"></p>
+            </div>
+
+            <hr class="result__divider" />
+
+            <ul class="fortune-list">
+              <!-- 1~4. 별점 + 문장 카드 (바이브·애정·금전·학업) -->
+              <li class="fortune-card" data-key="vibe">
+                <div class="fortune-card__head">
+                  <h3 class="fortune-card__title">✦ 오늘의 바이브</h3>
+                  <p class="stars" role="img"></p>
+                </div>
+                <p class="fortune-card__text"></p>
+              </li>
+              <li class="fortune-card" data-key="love">
+                <div class="fortune-card__head">
+                  <h3 class="fortune-card__title">✦ 애정운</h3>
+                  <p class="stars" role="img"></p>
+                </div>
+                <p class="fortune-card__text"></p>
+              </li>
+              <li class="fortune-card" data-key="money">
+                <div class="fortune-card__head">
+                  <h3 class="fortune-card__title">✦ 금전운</h3>
+                  <p class="stars" role="img"></p>
+                </div>
+                <p class="fortune-card__text"></p>
+              </li>
+              <li class="fortune-card" data-key="study">
+                <div class="fortune-card__head">
+                  <h3 class="fortune-card__title">✦ 학업운</h3>
+                  <p class="stars" role="img"></p>
+                </div>
+                <p class="fortune-card__text"></p>
+              </li>
+
+              <!-- 5. 에너지 지수 -->
+              <li class="fortune-card energy">
+                <div class="fortune-card__head">
+                  <h3 class="fortune-card__title" id="energy-title">✦ 에너지 지수</h3>
+                  <p class="energy__value"></p>
+                </div>
+                <div class="energy__gauge" role="progressbar" aria-labelledby="energy-title" aria-valuemin="0" aria-valuemax="100">
+                  <div class="energy__fill"></div>
+                </div>
+                <p class="fortune-card__text energy__comment"></p>
+              </li>
+
+              <!-- 6. 오늘의 솔루션 -->
+              <li class="fortune-card solution">
+                <h3 class="fortune-card__title">✦ 오늘의 솔루션</h3>
+                <p class="fortune-card__text solution__text"></p>
+              </li>
+            </ul>
+
+            <!-- 7. 행운의 색 / 행운의 물건 (2칸 그리드) -->
+            <ul class="lucky-grid">
+              <li class="fortune-card lucky-card">
+                <h3 class="fortune-card__title">✦ 오늘의 색</h3>
+                <p class="lucky-card__value">
+                  <span class="lucky-card__swatch" aria-hidden="true"></span>
+                  <span class="lucky-color"></span>
+                </p>
+              </li>
+              <li class="fortune-card lucky-card">
+                <h3 class="fortune-card__title">✦ 행운의 물건</h3>
+                <p class="lucky-card__value lucky-item"></p>
+              </li>
+            </ul>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <p>
+            <span class="footer__star" aria-hidden="true">☆</span> 운세는 재미로
+            봐 주세요!
+            <span class="footer__star" aria-hidden="true">☆</span>
+          </p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

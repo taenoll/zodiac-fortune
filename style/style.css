@@ -1,0 +1,546 @@
+/*
+  오늘의 별자리 운세
+  - 모바일 우선, 최대 너비 480px 가운데 정렬
+  - 폰트: Jua(제목·라벨·버튼) + Gowun Dodum(본문)
+*/
+
+:root {
+  --color-bg: #fff8ec;
+  --color-main: #c8b6e2;
+  --color-point: #8e7cc3;
+  --color-sub: #f6d6e0;
+  --color-star: #ffe9a8;
+  --color-text: #5a4e6b;
+  --color-label: #6e6280;
+  --color-border: #e9e0f5;
+  --color-hint: #f4eefb;
+  --color-white: #ffffff;
+
+  --font-title: 'Jua', sans-serif;
+  --font-body: 'Gowun Dodum', -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif;
+
+  --shadow-card: 0 8px 24px rgba(142, 124, 195, 0.18);
+  --shadow-result: 0 12px 32px rgba(142, 124, 195, 0.22);
+  --shadow-button: 0 6px 16px rgba(142, 124, 195, 0.35);
+  --shadow-symbol: 0 4px 12px rgba(142, 124, 195, 0.2);
+}
+
+/* base ------------------------------------------------------------ */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--color-point);
+}
+
+a:hover {
+  color: var(--color-text);
+}
+
+/* layout ---------------------------------------------------------- */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 장식 ✦ ☆ ☾ ------------------------------------------------------- */
+
+.deco {
+  position: absolute;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.deco--yellow {
+  color: var(--color-star);
+  text-shadow: 0 0 1px var(--color-main);
+}
+
+.deco--lavender {
+  color: var(--color-main);
+}
+
+.deco--pink {
+  color: var(--color-sub);
+}
+
+.deco--faint {
+  opacity: 0.5;
+}
+
+/* PC 배경 장식은 모바일에서 숨김 */
+.page-deco {
+  display: none;
+}
+
+/* header ---------------------------------------------------------- */
+
+.header {
+  position: relative;
+  /* 장식이 화면 끝 기준으로 놓이도록 container 의 좌우 여백만큼 확장 */
+  margin: 0 -20px;
+  padding: 40px 20px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__title {
+  font-family: var(--font-title);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.accent {
+  color: var(--color-point);
+}
+
+.header__date {
+  font-family: var(--font-title);
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--color-sub);
+}
+
+/* card ------------------------------------------------------------ */
+
+.card {
+  background: var(--color-white);
+}
+
+.input-card {
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 생년월일 입력 ----------------------------------------------------- */
+
+.birth {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.birth__legend {
+  /* legend 는 flex gap 이 적용되지 않아 margin 으로 간격 */
+  margin-bottom: 12px;
+  font-family: var(--font-title);
+  font-size: 16px;
+}
+
+.birth__fields {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field__label {
+  padding-left: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-label);
+}
+
+.field__select-wrap {
+  position: relative;
+}
+
+.field__select {
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 34px 0 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg);
+  font-size: 17px;
+  font-weight: 700;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.field__select:hover,
+.field__select:focus {
+  border-color: var(--color-main);
+}
+
+/* 아직 고르지 않은 칸("선택")은 흐리게 */
+.field__select:invalid {
+  color: var(--color-main);
+  font-weight: 400;
+}
+
+.field__select option {
+  color: var(--color-text);
+}
+
+.field__select:focus-visible {
+  outline: 2px solid var(--color-point);
+  outline-offset: 2px;
+}
+
+.field__arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  margin-top: -7px;
+  color: var(--color-point);
+  pointer-events: none;
+}
+
+.birth__hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--color-hint);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.birth__hint-symbol {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--color-point);
+}
+
+/* 빈 칸이 있는데 버튼을 눌렀을 때 */
+.birth__hint--error {
+  background: var(--color-sub);
+}
+
+.birth__hint--error .birth__hint-symbol {
+  font-family: var(--font-title);
+}
+
+/* 버튼 ------------------------------------------------------------ */
+
+.button {
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-point);
+  color: var(--color-white);
+  font-family: var(--font-title);
+  font-size: 17px;
+  box-shadow: var(--shadow-button);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(142, 124, 195, 0.4);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
+}
+
+/* 결과 카드 --------------------------------------------------------- */
+
+.result {
+  position: relative;
+  margin-top: 24px;
+  padding: 28px 24px;
+  border-radius: 28px;
+  box-shadow: var(--shadow-result);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-margin-top: 20px;
+
+  /* 등장 효과: .show 가 붙으면 나타남 */
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.result.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.result[hidden] {
+  display: none;
+}
+
+.result__deco-small {
+  right: 70px;
+}
+
+.sign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.sign__symbol {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--color-sub);
+  box-shadow: var(--shadow-symbol);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--color-point);
+}
+
+.sign__name {
+  font-family: var(--font-title);
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.sign__period {
+  font-size: 13px;
+}
+
+.result__divider {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: 2px dashed var(--color-sub);
+}
+
+/* 운세 카드 목록 (위에서 아래로 쌓기) */
+.fortune-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fortune-card {
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fortune-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fortune-card__title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.fortune-card__text {
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.keyword {
+  font-family: var(--font-title);
+  color: var(--color-point);
+}
+
+/* 별점 */
+.stars {
+  flex-shrink: 0;
+  font-size: 18px;
+  letter-spacing: 2px;
+  line-height: 1.3;
+}
+
+.stars__on {
+  color: var(--color-point);
+}
+
+.stars__off {
+  color: var(--color-main);
+}
+
+/* 에너지 지수 */
+.energy__value {
+  font-family: var(--font-title);
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--color-point);
+}
+
+.energy__gauge {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-white);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  overflow: hidden;
+}
+
+.energy__fill {
+  width: var(--energy, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-main), var(--color-point));
+  transition: width 0.8s ease-out 0.2s;
+}
+
+/* 오늘의 솔루션 (연핑크 강조) */
+.solution {
+  background: var(--color-sub);
+}
+
+/* 오늘의 색 / 행운의 물건 (2칸 그리드) */
+.lucky-grid {
+  /* .result 의 gap(20px) 대신 카드 사이 간격(12px)에 맞춤 */
+  margin-top: -8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.lucky-card__value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.lucky-card__swatch {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--swatch, var(--color-main));
+  border: 2px solid var(--color-white);
+  box-shadow: 0 0 0 1px var(--swatch, var(--color-main));
+}
+
+/* footer ---------------------------------------------------------- */
+
+.footer {
+  margin-top: auto;
+  padding: 32px 0 40px;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.footer__star {
+  color: var(--color-main);
+}
+
+/* PC (768px 이상) -------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .page-deco {
+    display: block;
+    position: absolute;
+    inset: 0;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .header {
+    padding: 56px 20px 32px;
+  }
+
+  .header__deco {
+    display: none;
+  }
+
+  .result__deco-small {
+    right: 90px;
+  }
+}
+
+/* 움직임 줄이기 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+  .result,
+  .energy__fill,
+  .button {
+    transition: none;
+  }
+}
